@@ -1,0 +1,13 @@
+ ---
+ # so ist es irgendwie am besten. 
+ - hosts: all
+   become: true
+   tasks:
+ 
+   - name: install apache and php
+     package:
+       name:
+         - "Template:Apache package"
+         - "Template:Php package"
+       state: latest
+       update_cache: yes
