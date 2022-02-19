@@ -1,0 +1,39 @@
+---
+ 
+- hosts: all
+  become: true
+  pre_tasks:
+ 
+  - name: install updates (CentOS)
+    dnf:
+      update_only: yes
+      update_cache: yes
+    when: ansible_distribution == "CentOS"
+ 
+  - name: install updates (Ubuntu)
+    apt:
+      upgrade: dist
+      update_cache: yes
+    when: ansible_distribution == "Ubuntu"
+
+
+- hosts: all
+  become: true
+  tasks:
+
+
+  - name: add ssh key molotov to authorized key file
+    tags: always
+    authorized_key:
+      user: molotov
+      key: "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQC6SfokAoJ3pGZPOF26IKQ6uDR5p9sQzJTlFMrgd8yB8//wUJXXxLKRCcjNjtJWoROYCZH4ZfSItGclTWbZhZYI4bzVPJRWKODocGXGdWntsPL178rC1Sfp6qiJUaoYfkKfCc192RpF1fBZ4hFKtDvXiZy3zwRYhF334OB87pS5hII1IrPAG0+X6b53jdkOTk6a/EemmHJilqX9irHYQm/ND1T53ntpE6ciDWZOImxxo+9dzn1tZGBq6b3n2CA0KBTlc94Zf1d6YN81ZXCIzhZ0JAdHJbdjniZMzUAwf62rtNVSSJHoc8UoMkQWmhLLyZpHZVmN2pAqT+jeovnXEm5PwAPU7VOZCU6W2z2ZCLlN2dYcuEqGjbcdMjj+ii16Rzd+7wo2Bq1jYcqb+ilFrQ0+SOV8C/hiRoJDj4QaNqFZET2EJxs+85GsWUuYUatz7Y9ZJFsDktAq2BozwKARYMbU32tc5Va2R+OMFhm0sM8bq4EfvJTs8grFUInW+047cuKF237ws7j+Ppcyon97AgGMssLo4k39rFZuBq1BiR0r3p2B4THQMuPVzEKOFUBL41hv3CDt+OcD/ROnOV2uPj8cxAyao+jcBDCRcqVbXgs+Vfxxv4VlRoHGYhN5nBDLEK47NYLAFmsPNlU2Iu+sGvjdnwOtS4mmteK8WAUWWQaGpw== root@ansible"     
+
+  - name: add sudoers file for molotov
+    tags: always
+    copy:
+      src: sudoer_molotov
+      dest: /etc/sudoers.d/molotov
+      owner: root
+      group: root
+      mode: 0440
+
