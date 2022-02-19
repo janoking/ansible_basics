@@ -44,7 +44,16 @@
         - php
       state: latest
     when: ansible_distribution == "CentOS"
- 
+
+  - name: start httpd (CentOS)
+    tags: apache,centos,httpd
+    service: 
+      name: httpd
+      state: started
+      enabled: yes
+    when: ansible_distribution == "CentOS"
+
+
   - name: install apache2 package (Ubuntu)
     apt:
       name:
@@ -60,6 +69,20 @@
       owner: root
       group: root
       mode: 0644
+
+  - name: change hostnamelookup
+    lineinfile: 
+      path: /etc/apache2/apache2.conf
+      regexp: '^HostnameLookups'
+      line: HostnameLookups on
+    when: ansible_distribution == "Debian"
+    register: apache2  #register ist hier wichtig das es bei when: apache2.changed wieder aufgerufen wird
+
+  - name: restart apache2 (Debian)    
+    service:
+      name: apache2
+      state: restarted
+    when: apache2.changed    # siehe register
 
 - hosts: db_servers
   become: true
